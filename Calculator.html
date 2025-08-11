@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Responsive Calculator — HTML/CSS/JS</title>
+  <style>
+    :root{
+      --bg: #0f1724;
+      --panel: #0b1220;
+      --accent: linear-gradient(90deg,#7c3aed,#06b6d4);
+      --btn: #111827;
+      --btn-2: #1f2937;
+      --glass: rgba(255,255,255,0.03);
+      --shadow: 0 8px 24px rgba(2,6,23,0.6);
+      --green: #10b981;
+      --red: #ef4444;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: radial-gradient(1000px 600px at 10% 10%, rgba(99,102,241,0.06), transparent),
+                  radial-gradient(1200px 800px at 90% 90%, rgba(6,182,212,0.04), transparent),
+                  var(--bg);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:24px;
+    }
+
+    .calculator{
+      width:360px;
+      max-width:95vw;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:16px;
+      padding:18px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.03);
+      display:grid;
+      grid-template-rows: auto 1fr;
+      gap:12px;
+    }
+
+    .screen{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;
+      padding:14px;
+      min-height:88px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:6px;
+      border: 1px solid rgba(255,255,255,0.02);
+    }
+
+    .input,
+    .result{
+      width:100%;
+      text-overflow:ellipsis;
+      overflow:hidden;
+      white-space:nowrap;
+    }
+
+    .input{
+      font-size:20px;
+      color:#cfe8ff;
+      letter-spacing:0.6px;
+      min-height:26px;
+    }
+
+    .result{
+      font-size:14px;
+      color:#9fb8d6;
+      opacity:0.9;
+      text-align:right;
+    }
+
+    .pad{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+    }
+
+    button{
+      appearance:none;
+      border:0;
+      background:var(--btn);
+      color:inherit;
+      padding:14px 12px;
+      border-radius:10px;
+      font-size:18px;
+      box-shadow: 0 6px 14px rgba(2,6,23,0.45);
+      transition: transform .08s ease, box-shadow .08s ease, background .12s ease;
+      cursor:pointer;
+    }
+    button:active{transform:translateY(2px)}
+    button:hover{filter:brightness(1.06)}
+
+    .btn-operator{background:linear-gradient(180deg,#232f41,#0f1724); color:#ffd;} 
+    .btn-equals{background:var(--accent); color:white; font-weight:600; box-shadow: 0 10px 30px rgba(124,58,237,0.18)}
+    .btn-clear{background: linear-gradient(90deg, rgba(239,68,68,0.12), rgba(239,68,68,0.03)); color:var(--red)}
+    .btn-del{background: linear-gradient(90deg, rgba(245,158,11,0.07), rgba(245,158,11,0.02)); color:#f59e0b}
+    .btn-dot{background: linear-gradient(90deg, rgba(16,185,129,0.04), rgba(16,185,129,0.02));}
+
+    .big{grid-column: span 2}
+
+    /* small helper row */
+    .meta{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      color:#9fb8d6;
+      opacity:0.9;
+    }
+    .kbd-hint{background:var(--glass); padding:6px 8px; border-radius:8px; font-weight:600}
+
+    @media (max-width:420px){
+      .calculator{padding:12px}
+      button{padding:12px 10px; font-size:16px}
+      .screen{min-height:72px}
+    }
+  </style>
+</head>
+<body>
+  <main class="calculator" role="application" aria-label="Calculator">
+    <div class="screen" aria-live="polite">
+      <div class="meta">
+        <div>Calculator</div>
+        <div class="kbd-hint">Keys: 0-9 + - * / ( ) Enter = Backspace Esc</div>
+      </div>
+      <div id="input" class="input" aria-label="Expression" tabindex="0"></div>
+      <div id="result" class="result" aria-label="Result">0</div>
+    </div>
+
+    <div class="pad" role="group" aria-label="Calculator buttons">
+      <button class="btn-clear" data-action="clear">C</button>
+      <button class="btn-del" data-action="delete">⌫</button>
+      <button data-value="(" class="btn-operator">(</button>
+      <button data-value=")" class="btn-operator">)</button>
+
+      <button data-value="7">7</button>
+      <button data-value="8">8</button>
+      <button data-value="9">9</button>
+      <button data-value="/" class="btn-operator">÷</button>
+
+      <button data-value="4">4</button>
+      <button data-value="5">5</button>
+      <button data-value="6">6</button>
+      <button data-value="*" class="btn-operator">×</button>
+
+      <button data-value="1">1</button>
+      <button data-value="2">2</button>
+      <button data-value="3">3</button>
+      <button data-value="-" class="btn-operator">−</button>
+
+      <button data-value="0">0</button>
+      <button data-value="." class="btn-dot">.</button>
+      <button class="big btn-equals" data-action="equals">=</button>
+      <button data-value="+" class="btn-operator">+</button>
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      const inputEl = document.getElementById('input');
+      const resultEl = document.getElementById('result');
+      let expression = '';
+
+      // Helper: allowed characters for safety
+      const allowedReg = /^[0-9+\-*/().\s]*$/;
+
+      function sanitizeAndEval(expr){
+        if(!expr || !allowedReg.test(expr)){
+          return {ok:false, value:'err'};
+        }
+        // replace unicode operator glyphs with JS operators
+        expr = expr.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-');
+        // avoid leading zeros or accidental double ops? let JS handle math but prevent dangerous code
+        try{
+          // Evaluate safely by constructing Function — safe after allowedReg check
+          // Limit length to avoid abuse
+          if(expr.length > 200) return {ok:false, value:'too long'};
+          const fn = new Function('return (' + expr + ')');
+          const val = fn();
+          if(typeof val === 'number' && isFinite(val)){
+            return {ok:true, value: +val.toPrecision(12)};
+          } else {
+            return {ok:false, value:'NaN'};
+          }
+        }catch(e){
+          return {ok:false, value:'err'};
+        }
+      }
+
+      function updateDisplay(){
+        inputEl.textContent = expression || '0';
+        const r = sanitizeAndEval(expression);
+        resultEl.textContent = r.ok ? r.value : '';
+      }
+
+      function append(str){
+        expression += String(str);
+        updateDisplay();
+      }
+
+      function clearAll(){ expression = ''; updateDisplay(); }
+      function backspace(){ expression = expression.slice(0,-1); updateDisplay(); }
+
+      // Button clicks
+      document.querySelectorAll('[data-value]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          append(btn.getAttribute('data-value'));
+        });
+      });
+      document.querySelectorAll('[data-action]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const act = btn.getAttribute('data-action');
+          if(act === 'clear') clearAll();
+          if(act === 'delete') backspace();
+          if(act === 'equals') computeFinal();
+        });
+      });
+
+      function computeFinal(){
+        const r = sanitizeAndEval(expression);
+        if(r.ok){
+          expression = String(r.value);
+          updateDisplay();
+        } else {
+          // show error briefly
+          resultEl.textContent = r.value;
+          setTimeout(()=> updateDisplay(), 900);
+        }
+      }
+
+      // Keyboard support
+      window.addEventListener('keydown', (ev)=>{
+        if(ev.key === 'Enter' || ev.key === '='){
+          ev.preventDefault();
+          computeFinal();
+          return;
+        }
+        if(ev.key === 'Backspace'){
+          ev.preventDefault();
+          backspace();
+          return;
+        }
+        if(ev.key === 'Escape'){
+          ev.preventDefault();
+          clearAll();
+          return;
+        }
+        // Accept digits, operators, parentheses, dot, space
+        if(/^[0-9+\-*/().]$/.test(ev.key)){
+          ev.preventDefault();
+          append(ev.key);
+          return;
+        }
+      });
+
+      // Support clicking on the input to position focus for keyboard users
+      inputEl.addEventListener('focus', ()=> inputEl.classList.add('focus'));
+      inputEl.addEventListener('blur', ()=> inputEl.classList.remove('focus'));
+
+      // initialize
+      clearAll();
+
+      // Accessibility: announce updated result (aria-live on screen container)
+      // Small enhancement: allow paste (ctrl+v)
+      window.addEventListener('paste', (ev)=>{
+        const text = (ev.clipboardData||window.clipboardData).getData('text');
+        if(text){
+          // only keep allowed chars
+          const cleaned = text.split('').filter(ch => /^[0-9+\-*/().\s]$/.test(ch)).join('');
+          if(cleaned) append(cleaned);
+        }
+      });
+
+      // Touch enhancement: long-press equals to get squared (example of bonus feature)
+      let holdTimer = null;
+      const eqBtn = document.querySelector('[data-action="equals"]');
+      eqBtn.addEventListener('pointerdown', ()=>{
+        holdTimer = setTimeout(()=>{
+          // square current value
+          const r = sanitizeAndEval(expression);
+          if(r.ok){ expression = String((+r.value)*(+r.value)); updateDisplay(); }
+        }, 600);
+      });
+      eqBtn.addEventListener('pointerup', ()=>{ clearTimeout(holdTimer); });
+      eqBtn.addEventListener('pointerleave', ()=>{ clearTimeout(holdTimer); });
+
+    })();
+  </script>
+</body>
+</html>
