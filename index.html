@@ -1,0 +1,39 @@
+<!doctype html>
+<body>
+  <main class="calculator" role="application" aria-label="Calculator">
+    <div class="screen" aria-live="polite">
+      <div class="meta">
+        <div>Calculator</div>
+        <div class="kbd-hint">Keys: 0-9 + - * / ( ) Enter = Backspace Esc</div>
+      </div>
+      <div id="input" class="input" aria-label="Expression" tabindex="0"></div>
+      <div id="result" class="result" aria-label="Result">0</div>
+    </div>
+
+    <div class="pad" role="group" aria-label="Calculator buttons">
+      <button class="btn-clear" data-action="clear">C</button>
+      <button class="btn-del" data-action="delete">⌫</button>
+      <button data-value="(" class="btn-operator">(</button>
+      <button data-value=")" class="btn-operator">)</button>
+
+      <button data-value="7">7</button>
+      <button data-value="8">8</button>
+      <button data-value="9">9</button>
+      <button data-value="/" class="btn-operator">÷</button>
+
+      <button data-value="4">4</button>
+      <button data-value="5">5</button>
+      <button data-value="6">6</button>
+      <button data-value="*" class="btn-operator">×</button>
+
+      <button data-value="1">1</button>
+      <button data-value="2">2</button>
+      <button data-value="3">3</button>
+      <button data-value="-" class="btn-operator">−</button>
+
+      <button data-value="0">0</button>
+      <button data-value="." class="btn-dot">.</button>
+      <button class="big btn-equals" data-action="equals">=</button>
+      <button data-value="+" class="btn-operator">+</button>
+    </div>
+  </main>
